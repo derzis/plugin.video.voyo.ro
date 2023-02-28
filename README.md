@@ -1,2 +1,2 @@
 # Voyo
-Video doplněk do [Kodi](http://www.kodi.tv/) pro přehrávání videí z [VOYO](https://voyo.nova.cz/).
+Supliment video pentru redarea filmelor, serialelor, emisiunilor și posturilor TV, disponibile pe platforma VOYO România(https://voyo.protv.ro).
