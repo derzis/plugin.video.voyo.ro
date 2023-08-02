@@ -2,9 +2,9 @@
 <settings>
     <category id="default" label="31001">
 		<setting label="Cont Voyo" type="lsep"/>
-	    	<setting id="source" type="select" label="Sursă" values="https://voyo.protv.ro/api/v1/|https://apivoyo.cms.nova.cz/api/v1/|https://apivoyo.cms.markiza.sk/api/v1/" />
+	    	<setting id="source" type="select" label="Sursă" values="https://apivoyo.cms.protvplus.ro/api/v1/|https://apivoyo.cms.nova.cz/api/v1/|https://apivoyo.cms.markiza.sk/api/v1/" />
 		<setting id="username" type="text" label="E-mail" default=""/>
-		<setting id="password" type="text" label="Parola" option="hidden" default=""/>
+		<setting id="password" type="text" label="Parolă" option="hidden" default=""/>
 		<setting id="accessToken" type="text" label="Access token" default="" visible="false"/>
 		<setting id="deviceId" type="text" label="Device ID" default="" visible="false"/>
 	</category>
