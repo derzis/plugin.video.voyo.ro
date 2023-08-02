@@ -1,11 +1,12 @@
+# -*- coding: utf-8 -*-
 import uuid
 import routing
 import re
 import requests
 import json
 import os
+import xbmc
 import xbmcvfs
-#import xbmc
 import xbmcaddon
 import xbmcgui
 import xbmcplugin
@@ -15,15 +16,14 @@ addon = xbmcaddon.Addon()
 profile = xbmcvfs.translatePath(addon.getAddonInfo('profile'))
 plugin = routing.Plugin()
 
-baseUrl = addon.getSetting('source') #'https://voyo.protv.ro/api/v1/'
-loginUrl = 'https://voyo.protv.ro/api/v1/'
+baseUrl = 'https://apivoyo.cms.protvplus.ro/api/v1/'
 session = requests.session()
 token = ''
 deviceHeaders = {
-'X-DeviceType': 'mobile',
-'X-DeviceOS': 'Android',
+'X-DeviceType': 'PC',
+'X-DeviceOS': 'LINUX',
 'X-DeviceOSVersion': '25',
-'X-DeviceManufacturer': 'Android',
+'X-DeviceManufacturer': 'Manjaro',
 'X-DeviceModel': 'Kodi',
 'X-DeviceName': 'Kodi',
 }
@@ -61,7 +61,7 @@ def login():
 	while not logged_in:
 		if not username or not password:
 			registration_notice = xbmcgui.Dialog()
-			registration_notice.ok('Cont VOYO', 'Pentru redarea programelor este necesar un cont cu abonament activ pe voyo.protv.ro\n\nDacă încă nu ai cont, înregistrează-te pe voyo.protv.ro și în fereastra următoare completează datele de autentificare')
+			registration_notice.ok('Cont VOYO', 'Înregistrarea este foarte simplā, durează mai puțin de 1 minut.')
 
 			username_prompt = xbmcgui.Dialog()
 			username = username_prompt.input('Utilizator (e-mail)')
@@ -71,7 +71,7 @@ def login():
 			addon.setSetting(id='username', value=username)
 
 			password_prompt = xbmcgui.Dialog()
-			password = password_prompt.input('Parola', option=xbmcgui.ALPHANUM_HIDE_INPUT)
+			password = password_prompt.input('Parolă', option=xbmcgui.ALPHANUM_HIDE_INPUT)
 
 			if not password:
 				raise PermissionError()
@@ -82,7 +82,7 @@ def login():
 			logged_in = True
 			addon.setSetting(id='accessToken', value=token)
 		except PermissionError:
-			registration_notice.ok('Cont VOYO', 'Datele de acces incorecte, încearcă să le reintroduci.')
+			registration_notice.ok('Cont VOYO', 'Date de acces nevalide, vă rugăm să încercați din nou.')
 			username = None
 			password = None
 
@@ -96,7 +96,7 @@ def get(url, method='GET'):
 	global token
 	token = addon.getSetting('accessToken')
 	deviceId = addon.getSetting('deviceId')
-		
+
 	if not token or not deviceId:
 		login()
 
@@ -129,7 +129,7 @@ def get_categories():
 
 def list_category(id, page=1, sort='date-desc'):
 	items = []
-	jitems = get(f'content?category={id}&page={page}&sort={sort}')['items']
+	jitems = get('content?category={0}&page={1}&sort={2}'.format(id, page, sort))['items']
 	for jitem in jitems:
 		items.append(
 			{
@@ -142,7 +142,7 @@ def list_category(id, page=1, sort='date-desc'):
 
 def list_tvshow_seasons(id):
 	seasons = []
-	jseasons = get(f'tvshow/{id}')['seasons']
+	jseasons = get('tvshow/{0}'.format(id))['seasons']
 	for jseason in jseasons:
 		seasons.append(
 			{
@@ -155,7 +155,7 @@ def list_tvshow_seasons(id):
 
 def list_season_episodes(showId, seasonId):
 	episodes = []
-	jepisodes = get(f'tvshow/{showId}?season={seasonId}')['sections'][0]['content']
+	jepisodes = get('tvshow/{0}?season={1}'.format(showId, seasonId))['sections'][0]['content']
 	for jepisode in jepisodes:
 		episodes.append(
 			{
@@ -169,7 +169,7 @@ def list_season_episodes(showId, seasonId):
 
 def list_live_channels(id):
 	items = []
-	jitems = get(f'overview?category={id}')['liveTvs']
+	jitems = get('overview?category={0}'.format(id))['liveTvs']
 	for jitem in jitems:
 		items.append(
 			{
@@ -182,7 +182,7 @@ def list_live_channels(id):
 	return items
 
 def get_content_info(id):
-	resp = get(f'content/{id}/plays?acceptVideo=hls%2cdash%2cdrm-widevine', method='POST')
+	resp = get('content/{0}/plays?acceptVideo=hls%2cdash%2cdrm-widevine'.format(id), method='POST')
 	content = resp['content']
 	result = {
 		'id': id,
@@ -205,7 +205,7 @@ def get_content_info(id):
 	return result
 
 def get_search_result(pattern):
-	resp = get(f'search?query={pattern}')
+	resp = get('search?query={0}'.format(pattern))
 	result = []
 	for rg in resp['resultGroups']:
 		for jres in rg['results']:
@@ -252,7 +252,7 @@ def play_video(id):
 		list_item.setContentLookup(False)
 		if protocol == 'mpd':
 			list_item.setMimeType('application/xml+dash')
-		list_item.setProperty('inputstream', 'inputstream.adaptive')
+		list_item.setProperty('inputstreamaddon', 'inputstream.adaptive')
 		list_item.setProperty('inputstream.adaptive.manifest_type', protocol)
 		if 'drm' in content:
 			list_item.setProperty('inputstream.adaptive.license_type', content['drm'])
@@ -262,7 +262,8 @@ def play_video(id):
 
 
 @plugin.route('/tvshow/<id>/season/<season>')
-def season(id, season):	
+def season(id, season):
+	xbmcplugin.setContent(plugin.handle, "episodes")
 	episodes = list_season_episodes(id, season)
 	for item in episodes:
 		title = item['title']
