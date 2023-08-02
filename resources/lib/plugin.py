@@ -22,7 +22,7 @@ token = ''
 deviceHeaders = {
 'X-DeviceType': 'PC',
 'X-DeviceOS': 'LINUX',
-'X-DeviceOSVersion': '25',
+'X-DeviceOSVersion': '23.0',
 'X-DeviceManufacturer': 'Manjaro',
 'X-DeviceModel': 'Kodi',
 'X-DeviceName': 'Kodi',
