@@ -2,7 +2,6 @@
     <requires>
         <import addon="xbmc.python" version="3.0.0" />
         <import addon="script.module.requests" version="2.22.0" />
-        <import addon="script.module.beautifulsoup4" version="4.6.2" />
         <import addon="script.module.routing" version="0.2.3" />
         <import addon="script.module.inputstreamhelper" version="0.3.3" />
     </requires>
@@ -16,7 +15,7 @@
         <description lang="ro_RO">Supliment pentru redarea filmelor, serialelor, emisiunilor și posturilor TV, disponibile pe platforma VOYO România.</description>
         <platform>all</platform>
         <source>https://github.com/derzis/plugin.video.voyo.ro</source>
-        <news>Compatibil cu Kodi 19 și Kodi 20</news>
+        <news>Compatibil cu Kodi 20 și Kodi 21</news>
         <assets>
             <icon>resources/icon.png</icon>
         </assets>
